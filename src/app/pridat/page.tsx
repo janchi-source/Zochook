@@ -1,15 +1,15 @@
 
-// src/app/gdpr/page.tsx
+// src/app/add/page.tsx
 
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 
-export const metadata = {title: "GDPR | Kolcobos"};
+export const metadata = {title: "Add | Kolcobos"};
 
-export default function Gdpr() {
+export default function Add() {
   return (
     <Container>
-      <Typography> GDPR </Typography>
+      <Typography> Add </Typography>
     </Container>
   );
 }
