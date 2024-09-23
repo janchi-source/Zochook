@@ -3,7 +3,7 @@
 
 import Typography from "@mui/material/Typography";
 
-export const metadata = {title: "Domov | ZoškaSnap"};
+export const metadata = {title: "Domov | Kolcobos"};
 
 export default function Home() {
   return (
