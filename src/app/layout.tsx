@@ -1,22 +1,25 @@
-import type { Metadata } from "next";
-import "./globals.css";
+// src/app/layout.tsx
 
+import React from 'react';
+import { Inter } from 'next/font/google';
+import NavBar from '../components/NavBar';
 
-export const metadata: Metadata = {
-  title: "SnapZoška",
-  description: "Generated bz students of SPŠE Zochova 9, Bratislava",
+const inter = Inter({ subsets: ['latin'] }); // Example of using a Google font
+
+export const metadata = {
+  title: 'Zochook',
+  description: 'A social media application similar to Instagram.',
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <html lang="sk">
-      <body>
-        {children}
+    <html lang="en">
+      <body className={inter.className}>
+        <main>{children}</main>
+        <NavBar />
       </body>
     </html>
   );
-}
+};
+
+export default Layout;

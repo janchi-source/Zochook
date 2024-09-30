@@ -1,15 +1,25 @@
+// src/app/layout.tsx
 
-// src/app/podmienky/page.tsx
+import React from 'react';
+import { Inter } from 'next/font/google';
+import NavBar from '../../components/NavBar'; // Correct the path as necessary
 
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
+const inter = Inter({ subsets: ['latin'] });
 
-export const metadata = {title: "Podmienky | Kolcobos"};
+export const metadata = {
+  title: 'Zochook',
+  description: 'A social media application similar to Instagram.',
+};
 
-export default function TermsConditions() {
+const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <Container>
-      <Typography> Podmienky používania </Typography>
-    </Container>
+    <html lang="en">
+      <body className={inter.className} style={{ paddingBottom: '56px' }}> {/* Adjust padding as necessary */}
+        <main>{children}</main>
+        <NavBar />
+      </body>
+    </html>
   );
-}
+};
+
+export default Layout;

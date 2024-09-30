@@ -1,28 +1,12 @@
-import * as React from 'react';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
 
-// export default function Home() {
-//   return ();
-// }
+// src/app/page.tsx
 
-export default function RadioButtonsGroup() {
+import Typography from "@mui/material/Typography";
+
+export const metadata = {title: "Domov | Kolcobos"};
+
+export default function Home() {
   return (
-    <FormControl>
-      <FormLabel id="demo-radio-buttons-group-label">Gender</FormLabel>
-      <RadioGroup
-        aria-labelledby="demo-radio-buttons-group-label"
-        defaultValue="female"
-        name="radio-buttons-group"
-      >
-        <FormControlLabel value="female" control={<Radio />} label="Female" />
-        <FormControlLabel value="male" control={<Radio />} label="Male" />
-        <FormControlLabel value="other" control={<Radio />} label="Ginji" />
-      </RadioGroup>
-    </FormControl>
+      <Typography> Domovská stránka </Typography>
   );
-  
 }
