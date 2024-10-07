@@ -50,3 +50,8 @@ function list_dir {
 }
 
 list_dir "." ""
+
+
+client_id = 5597333445-begsbq16d6gp7om7kb2tn03pvv5edg4h.apps.googleusercontent.com
+
+client-secret = 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
