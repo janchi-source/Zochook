@@ -1,18 +1,10 @@
+// src/app/auth/prihlasenie/page.tsx
 
-// src/app/auth/login/page.tsx
 
-"use client"
+import SignInView from "../../../sections/SignInView";
 
-import { Container, Typography, Button } from '@mui/material';
-import { signIn } from 'next-auth/react';
+export const metadata = {title: "Signin | Kolcobos"};
 
-export default function Login() {
-  return (
-    <Container>
-      <Typography> Login </Typography>
-      <Button variant="contained" color="primary" onClick={() => signIn('google')}>
-        Prihlasenie pomocou Google.
-      </Button>
-    </Container>
-  );
+export default function SignInPage() {
+  return <SignInView />;
 }
