@@ -1,43 +1,19 @@
 
 // src/app/page.tsx
 
-// import Typography from "@mui/material/Typography";
 
-// export const metadata = {title: "Domov | Kolcobos"};
-
-// export default function Home() {
-//   return (
-//       <Typography> Domovská stránka </Typography>
-//   );
-// }
+import { getServerSession } from 'next-auth';
+import { authOptions } from '../api/auth/[...nextauth]/authOptions';
+import NonAuthPageView from '@/sections/NonAuthHomeView';
+import AuthPageView from '@/sections/AuthHomeView';
 
 
-// src/app/page.tsx
+export const metadata = { title: "Domov | Kolcobos" };
 
-'use client';
+export default async function Home() {
+  const session = await getServerSession(authOptions);
 
-import { useSession } from 'next-auth/react';
-import React from 'react';
-import { CircularProgress, Box } from '@mui/material';
-import NonAuthPageView from '../../sections/NonAuthHomeView';
-import AuthPageView from '../../sections/AuthHomeView';
-
-
-
-// export const metadata = { title: "Domov | Kolcobos" };
-
-export default function Home() {
-  const { data: session, status } = useSession();
-
-  if (status === 'loading') {
-    return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
-        <CircularProgress />
-      </Box>
-    );
-  }
-
-  return session ? <AuthPageView /> : <NonAuthPageView />;
+  return session ? <AuthPageView session={session} /> : <NonAuthPageView />;
 }
 
 

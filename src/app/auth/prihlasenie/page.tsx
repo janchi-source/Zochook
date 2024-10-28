@@ -1,15 +1,18 @@
 
 // src/app/auth/login/page.tsx
 
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
+"use client"
 
-export const metadata = {title: "Login | Kolcobos"};
+import { Container, Typography, Button } from '@mui/material';
+import { signIn } from 'next-auth/react';
 
 export default function Login() {
   return (
     <Container>
       <Typography> Login </Typography>
+      <Button variant="contained" color="primary" onClick={() => signIn('google')}>
+        Prihlasenie pomocou Google.
+      </Button>
     </Container>
   );
 }

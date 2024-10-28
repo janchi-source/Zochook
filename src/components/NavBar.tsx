@@ -15,7 +15,7 @@ import { usePathname, useRouter } from 'next/navigation';
 // import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 // import Login from '@/app/auth/prihlasenie/page';
 import LoginIcon from '@mui/icons-material/Login';
-import LogoutIcon from '@mui/icons-material/Logout';
+// import LogoutIcon from '@mui/icons-material/Logout';
 
 const NavBar = () => {
   const [value, setValue] = React.useState(0);
@@ -58,10 +58,10 @@ const NavBar = () => {
         router.push('/profil');
         break;
       case 3:
-        router.push('/auth/prihlasenie');
+        router.push('/auth/registracia');
         break;
       case 4:
-        router.push('/auth/odhlasenie');
+        router.push('/auth/prihlasenie');
         break;
       default:
         break;
@@ -78,8 +78,8 @@ const NavBar = () => {
         <BottomNavigationAction label="Home" icon={<HomeIcon />} />
         <BottomNavigationAction label="Prispevky" icon={<AddBoxIcon />} />
         <BottomNavigationAction label="Profili" icon={<AccountCircleIcon/>} />
+        <BottomNavigationAction label="Sign Up" icon={<LoginIcon />} />
         <BottomNavigationAction label="Sign In" icon={<LoginIcon />} />
-        <BottomNavigationAction label="Sign Out" icon={<LogoutIcon />} />
       </BottomNavigation>
     </Box>
   );
