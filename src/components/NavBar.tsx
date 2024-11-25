@@ -14,7 +14,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { usePathname, useRouter } from 'next/navigation';
 // import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 // import Login from '@/app/auth/prihlasenie/page';
-import LoginIcon from '@mui/icons-material/Login';
+import LoginIcon from '@mui/icons-material/LocalDiningTwoTone';
 // import LogoutIcon from '@mui/icons-material/Logout';
 
 const NavBar = () => {
