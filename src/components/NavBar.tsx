@@ -21,16 +21,18 @@ import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { useTheme } from '@/components/ThemeProvider';
 
 interface NavBarProps {
   mode: PaletteMode;
   setMode: (mode: PaletteMode) => void;
 }
 
-export default function Navbar({ mode, setMode }: NavBarProps) {
+export default function Navbar() {
   const [value, setValue] = React.useState<string>("/");
   const router = useRouter();
   const { data: session, status } = useSession();
+  const { mode, toggleTheme } = useTheme();
 
   const handleNavigation = (event: React.SyntheticEvent, newValue: string) => {
     console.log("Navigating to:", newValue);
@@ -72,7 +74,7 @@ export default function Navbar({ mode, setMode }: NavBarProps) {
     <Box sx={{ width: "100%", position: "fixed", bottom: 0 }}>
       <IconButton 
         sx={{ position: 'absolute', right: 16, top: -48 }}
-        onClick={() => setMode(mode === 'light' ? 'dark' : 'light')}
+        onClick={toggleTheme}
         color="inherit"
       >
         {mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}

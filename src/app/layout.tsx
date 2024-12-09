@@ -2,11 +2,12 @@
 import "./globals.css";
 import Navbar from "@/components/NavBar";
 import AuthProvider from "../components/AuthProvider";
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { useState, useMemo } from 'react';
 import { PaletteMode } from '@mui/material';
 import { getDesignTokens } from '../app/theme/themeConfig'
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 interface RootLayoutProps {
   children: React.ReactNode;
