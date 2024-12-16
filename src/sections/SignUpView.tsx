@@ -17,13 +17,12 @@ import { useTheme } from '@mui/material/styles';
 
 export default function SignUpView() {
   const [acceptTerms, setAcceptTerms] = useState(false);
-  const theme = useTheme();
   const router = useRouter();
 
   const handleSignUp = async () => {
     if (!acceptTerms) {
       alert('Please accept the terms and conditions to proceed.');
-      return; // Exit the function if terms are not accepted
+      return; 
     }
 
     const result = await signIn('google', { callbackUrl: '/' });
