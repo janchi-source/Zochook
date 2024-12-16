@@ -23,10 +23,6 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useTheme } from '@/components/ThemeProvider';
 
-interface NavBarProps {
-  mode: PaletteMode;
-  setMode: (mode: PaletteMode) => void;
-}
 
 export default function Navbar() {
   const [value, setValue] = React.useState<string>("/");
