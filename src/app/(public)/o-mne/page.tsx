@@ -1,4 +1,4 @@
-// src/app/about/page.tsx
+// src/app/(public)/o-mne/page.tsx
 
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
@@ -117,7 +117,7 @@ export default function AboutUs() {
                   Continuous Improvement
                 </Typography>
                 <Typography paragraph>
-                  We're committed to staying at the forefront of technological advancement, constantly updating 
+                  We&apos;re committed to staying at the forefront of technological advancement, constantly updating 
                   our skills and methodologies to provide the best possible solutions.
                 </Typography>
               </Grid>
@@ -131,7 +131,7 @@ export default function AboutUs() {
                 Ready to Work Together?
               </Typography>
               <Typography variant="body1" sx={{ mb: 2 }}>
-                Let's discuss how we can help transform your business with our innovative solutions.
+                Let&apos;s discuss how we can help transform your business with our innovative solutions.
               </Typography>
               {/* Add your contact button or form here */}
             </Box>
