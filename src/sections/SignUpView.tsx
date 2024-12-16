@@ -1,53 +1,109 @@
 // src/sections/SignUpView.tsx
 
-"use client";
+'use client';
 
-import {
-  Button,
-  Container,
-  Typography,
-} from "@mui/material";
-import { signIn } from "next-auth/react";
-import GoogleIcon from "@mui/icons-material/Google";
+import React, { useState } from 'react';
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Box from '@mui/material/Box';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Link from '@mui/material/Link';
+import { useTheme } from '@mui/material/styles';
 
 export default function SignUpView() {
+  const [acceptTerms, setAcceptTerms] = useState(false);
+  const theme = useTheme();
+  const router = useRouter();
+
+  const handleSignUp = async () => {
+    if (!acceptTerms) {
+      alert('Please accept the terms and conditions to proceed.');
+      return; // Exit the function if terms are not accepted
+    }
+
+    const result = await signIn('google', { callbackUrl: '/' });
+    if (result?.ok) {
+      router.push('/');
+    }
+  };
+
   return (
-    <Container
-      maxWidth="xs"
+    <Box
       sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        mt: 5,
-        p: 3,
-        bgcolor: "background.paper",
-        boxShadow: 3,
-        borderRadius: 2,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: '100vh',
+        bgcolor: 'background.default',
       }}
     >
-      {/* Logo / Title */}
-      <Typography variant="h5" sx={{ mb: 3 }}>
-        Registrácia
-      </Typography>
-
-      {/* Sign-in link */}
-      <Typography variant="body1" sx={{ mb: 6 }}>
-        Už máte účet? <a href="/auth/prihlasenie">Prihláste sa</a>
-      </Typography>
-
-      {/* Google Sign Up */}
-      <Button
-        variant="outlined"
-        fullWidth
-        startIcon={<GoogleIcon />}
-        onClick={() => signIn("google")}
-        sx={{ mb: 1 }}
+      <Card
+        sx={{
+          width: 400,
+          padding: '20px',
+          bgcolor: 'background.paper',
+          color: 'text.primary',
+        }}
       >
-        Registrovať sa účtom Google
-      </Button>
-
-
-    </Container>
+        <CardContent sx={{ textAlign: 'center' }}>
+          <Typography
+            variant="h4"
+            gutterBottom
+            sx={{ color: 'text.primary' }}
+          >
+            Registrácia
+          </Typography>
+          <Typography
+            variant="body1"
+            gutterBottom
+            sx={{ color: 'text.secondary' }}
+          >
+            Please sign up using your Google account.
+          </Typography>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={acceptTerms}
+                onChange={(e) => setAcceptTerms(e.target.checked)}
+                color="primary"
+              />
+            }
+            label={
+              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                I accept the{' '}
+                <Link href="/podmienky" color="primary">
+                  Terms of Service
+                </Link>{' '}
+                and{' '}
+                <Link href="/gdpr" color="primary">
+                  GDPR Policy
+                </Link>
+              </Typography>
+            }
+            sx={{ marginTop: 2, marginBottom: 2 }}
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSignUp} // Always clickable
+            sx={{
+              marginTop: '20px',
+              bgcolor: 'primary.main',
+              color: 'primary.contrastText',
+              '&:hover': {
+                bgcolor: 'primary.dark',
+              },
+            }}
+          >
+            Register with Google
+          </Button>
+        </CardContent>
+      </Card>
+    </Box>
   );
 }
-
