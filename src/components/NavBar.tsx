@@ -6,7 +6,6 @@ import {
   BottomNavigationAction, 
   Box, 
   Avatar,
-  PaletteMode,
   IconButton
 } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
