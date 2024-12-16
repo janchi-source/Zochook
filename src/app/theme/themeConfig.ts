@@ -1,39 +1,52 @@
-import { PaletteMode } from '@mui/material';
+// src/styles/theme.ts
+
 import { createTheme } from '@mui/material/styles';
 
-export const getDesignTokens = (mode: PaletteMode) => ({
-  palette: {
-    mode,
-    ...(mode === 'light' 
-      ? {
-          primary: {
-            main: '#ff1919',
-          },
-          background: {
-            default: '#f5f5f5',
-            paper: '#ffffff',
-          },
-        }
-      : {
-          primary: {
-            main: '#a15dcb',
-          },
-          background: {
-            default: '#121212',
-            paper: '#1e1e1e',
-          },
-        }
-    ),
+const baseTheme = {
+  typography: {
+    fontFamily: 'Roboto, Arial, sans-serif',
+    h1: {
+      fontSize: '2rem',
+      fontWeight: 700,
+    },
+    body1: {
+      fontSize: '1rem',
+    },
   },
-  components: {
-    MuiBottomNavigation: {
-      styleOverrides: {
-        root: {
-          backgroundColor: mode === 'light' ? '#ffffff' : '#1e1e1e',
-        },
-      },
+};
+
+const lightTheme = createTheme({
+  ...baseTheme,
+  palette: {
+    mode: 'light',
+    primary: { main: '#dc004e' },
+    secondary: { main: '#1976d2' },
+    background: {
+      default: '#f4f6f8',
+      paper: '#ffffff',
+    },
+    text: {
+      primary: '#000000',
+      secondary: '#555555',
     },
   },
 });
 
-export const createAppTheme = (mode: PaletteMode) => createTheme(getDesignTokens(mode));
+const darkTheme = createTheme({
+  ...baseTheme,
+  palette: {
+    mode: 'dark',
+    primary: { main: '#f44336' },
+    secondary: { main: '#2196f3' }, 
+    background: {
+      default: '#121212', 
+      paper: '#1e1e1e', 
+    },
+    text: {
+      primary: '#ffffff', 
+      secondary: '#aaaaaa', 
+    },
+  },
+});
+
+export { lightTheme, darkTheme };

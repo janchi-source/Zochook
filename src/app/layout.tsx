@@ -1,40 +1,33 @@
-'use client'
+// src/app/layout.tsx
+
+import { Metadata } from "next";
 import "./globals.css";
-import Navbar from "@/components/NavBar";
-import AuthProvider from "../components/AuthProvider";
-import { createTheme } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
-import { useState, useMemo } from 'react';
-import { PaletteMode } from '@mui/material';
-import { getDesignTokens } from '../app/theme/themeConfig'
-import { ThemeProvider } from "@/components/ThemeProvider";
 
-interface RootLayoutProps {
+import ThemeProvider from "@/components/ThemeProvider";
+import AuthProvider from "../components/AuthProvider"
+import Navbar from "../components/NavBar";
+
+export const metadata: Metadata = {
+  title: "Bos",
+  description: "Bos",
+};
+
+export default function RootLayout({
+  children,
+}: {
   children: React.ReactNode;
-}
-
-export default function RootLayout({ children }: RootLayoutProps) {
-  const [mode, setMode] = useState<PaletteMode>('light');
-  
-  const theme = useMemo(() => 
-    createTheme(getDesignTokens(mode)), 
-    [mode]
-  );
-
+}) {
   return (
     <html lang="sk">
       <body>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <AuthProvider>
-            <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-              <main style={{ flexGrow: 1 }}>
-                {children}
-              </main>
-            </div>
-            <Navbar mode={mode} setMode={setMode} />
-          </AuthProvider>
-        </ThemeProvider>
+        <AuthProvider>
+          <ThemeProvider>
+            <main >
+              {children}
+            </main>
+            <Navbar />
+          </ThemeProvider>
+        </AuthProvider>
       </body>
     </html>
   );

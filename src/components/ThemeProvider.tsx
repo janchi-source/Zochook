@@ -1,73 +1,42 @@
-// src/components/ThemeProvider.tsx
-'use client'
+"use client";
 
-import { createContext, useContext, useState, useMemo, ReactNode } from 'react';
-import { ThemeProvider as MUIThemeProvider, createTheme } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
-import { PaletteMode } from '@mui/material';
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { ThemeProvider as MUIThemeProvider, CssBaseline } from "@mui/material";
+import { darkTheme, lightTheme } from "../app/theme/themeConfig";
 
-interface ThemeContextType {
-  mode: PaletteMode;
-  toggleTheme: () => void;
-}
-
-const ThemeContext = createContext<ThemeContextType>({
-  mode: 'light',
+const ThemeContext = createContext({
   toggleTheme: () => {},
+  isDarkMode: false,
 });
 
-const getDesignTokens = (mode: PaletteMode) => ({
-  palette: {
-    mode,
-    ...(mode === 'light' 
-      ? {
-          primary: {
-            main: '#4a148c',
-          },
-          background: {
-            default: '#f5f5f5',
-            paper: '#ffffff',
-          },
-        }
-      : {
-          primary: {
-            main: '#6a1b9a',
-          },
-          background: {
-            default: '#121212',
-            paper: '#1e1e1e',
-          },
-        }
-    ),
-  },
-  components: {
-    MuiBottomNavigation: {
-      styleOverrides: {
-        root: {
-          backgroundColor: mode === 'light' ? '#ffffff' : '#1e1e1e',
-        },
-      },
-    },
-  },
-});
+export const useTheme = () => useContext(ThemeContext);
 
-export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [mode, setMode] = useState<PaletteMode>('light');
+const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "dark") {
+      setIsDarkMode(true);
+    }
+  }, []);
 
   const toggleTheme = () => {
-    setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
+    const newTheme = !isDarkMode;
+    setIsDarkMode(newTheme);
+    localStorage.setItem("theme", newTheme ? "dark" : "light");
   };
 
-  const theme = useMemo(() => createTheme(getDesignTokens(mode)), [mode]);
-
   return (
-    <ThemeContext.Provider value={{ mode, toggleTheme }}>
-      <MUIThemeProvider theme={theme}>
+    <ThemeContext.Provider value={{ toggleTheme, isDarkMode }}>
+      <MUIThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
         <CssBaseline />
         {children}
       </MUIThemeProvider>
     </ThemeContext.Provider>
   );
-}
+};
 
-export const useTheme = () => useContext(ThemeContext);
+export default ThemeProvider;
