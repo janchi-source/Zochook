@@ -5,6 +5,7 @@ import { signIn } from "next-auth/react";
 import GoogleIcon from "@mui/icons-material/Google";
 import { useState } from "react";
 import Alert from "@mui/material/Alert";
+import SignInUpViewLink from "../components/CustomLink";
 
 export default function SignInView() {
   const [error] = useState<string | null>(null);
@@ -39,9 +40,10 @@ export default function SignInView() {
 
       {error && <Alert severity="error">{error}</Alert>}
 
-      <Typography variant="body2" sx={{ mt: 2 }}>
-        Don't have an account? <a href="/auth/registracia">Create one!</a>
+      <Typography variant="body2" sx={{ mt: 3 }}>
+        Already have an account? <SignInUpViewLink href="/signin" text="Sign in!" />
       </Typography>
+
     </Container>
   );
 }
