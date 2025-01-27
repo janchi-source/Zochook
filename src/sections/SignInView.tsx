@@ -1,17 +1,15 @@
-// src/sections/SignInView.tsx
-
 "use client";
 
-import {
-    Button,
-    Container,
-    Typography,
-  } from "@mui/material";
-  import { signIn } from "next-auth/react";
-  import GoogleIcon from "@mui/icons-material/Google";
-
+import { Button, Container, Typography } from "@mui/material";
+import { signIn } from "next-auth/react";
+import GoogleIcon from "@mui/icons-material/Google";
+import { useState } from "react";
+import Alert from "@mui/material/Alert";
 
 export default function SignInView() {
+  const [isChecked, setIsChecked] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   return (
     <Container
       maxWidth="xs"
@@ -26,12 +24,10 @@ export default function SignInView() {
         borderRadius: 2,
       }}
     >
-      {/* Logo / Title */}
       <Typography variant="h5" sx={{ mb: 3 }}>
         Prihlásenie
       </Typography>
 
-      {/* Google Sign Up */}
       <Button
         variant="outlined"
         fullWidth
@@ -42,8 +38,11 @@ export default function SignInView() {
         Prihlásiť sa účtom Google
       </Button>
 
+      {error && <Alert severity="error">{error}</Alert>}
 
+      <Typography variant="body2" sx={{ mt: 2 }}>
+        Don't have an account? <a href="/auth/registracia">Create one!</a>
+      </Typography>
     </Container>
   );
 }
-

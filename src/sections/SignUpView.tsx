@@ -1,5 +1,3 @@
-// src/sections/SignUpView.tsx
-
 'use client';
 
 import React, { useState } from 'react';
@@ -12,16 +10,38 @@ import CardContent from '@mui/material/CardContent';
 import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import Link from '@mui/material/Link';
+import Alert from "@mui/material/Alert";
+import SignInUpViewLink from "../components/CustomLink";
+import { z } from "zod";
 
 export default function SignUpView() {
-  const [acceptTerms, setAcceptTerms] = useState(false);
+  const [isChecked, setIsChecked] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
+  const signUpSchema = z.object({
+    acceptedTerms: z.literal(true, {
+      errorMap: () => ({
+        message: "Musíte súhlasiť s GDPR a podmienkami používania"
+      })
+    })
+  });
+
+  const handleCheckboxChange = () => {
+    setIsChecked(!isChecked);
+    if (error) {
+      setError(null);
+    }
+  };
+
   const handleSignUp = async () => {
-    if (!acceptTerms) {
-      alert('Please accept the terms and conditions to proceed.');
-      return; 
+    try {
+      signUpSchema.parse({ acceptedTerms: isChecked });
+    } catch (e) {
+      if (e instanceof z.ZodError) {
+        setError(e.errors[0].message);
+      }
+      return;
     }
 
     const result = await signIn('google', { callbackUrl: '/' });
@@ -37,7 +57,7 @@ export default function SignUpView() {
         justifyContent: 'center',
         alignItems: 'center',
         minHeight: '100vh',
-        bgcolor: 'background.default',
+        bgcolor: 'background.default'
       }}
     >
       <Card
@@ -45,61 +65,51 @@ export default function SignUpView() {
           width: 400,
           padding: '20px',
           bgcolor: 'background.paper',
-          color: 'text.primary',
+          color: 'text.primary'
         }}
       >
         <CardContent sx={{ textAlign: 'center' }}>
-          <Typography
-            variant="h4"
-            gutterBottom
-            sx={{ color: 'text.primary' }}
-          >
+          <Typography variant="h4" gutterBottom sx={{ color: 'text.primary' }}>
             Registrácia
           </Typography>
-          <Typography
-            variant="body1"
-            gutterBottom
-            sx={{ color: 'text.secondary' }}
-          >
+          <Typography variant="body1" gutterBottom sx={{ color: 'text.secondary' }}>
             Please sign up using your Google account.
           </Typography>
+
           <FormControlLabel
             control={
-              <Checkbox
-                checked={acceptTerms}
-                onChange={(e) => setAcceptTerms(e.target.checked)}
-                color="primary"
-              />
+              <Checkbox checked={isChecked} onChange={handleCheckboxChange} />
             }
             label={
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                I accept the{' '}
-                <Link href="/podmienky" color="primary">
-                  Terms of Service
-                </Link>{' '}
-                and{' '}
-                <Link href="/gdpr" color="primary">
-                  GDPR Policy
-                </Link>
-              </Typography>
+              <>
+                Súhlasím s <SignInUpViewLink href="/gdpr" text="GDPR" /> a{" "}
+                <SignInUpViewLink href="/podmienky" text="podmienkami používania" />.
+              </>
             }
-            sx={{ marginTop: 2, marginBottom: 2 }}
+            sx={{ mb: 2 }}
           />
+
+          {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+
           <Button
             variant="contained"
             color="primary"
-            onClick={handleSignUp} // Always clickable
+            onClick={handleSignUp}
             sx={{
               marginTop: '20px',
               bgcolor: 'primary.main',
               color: 'primary.contrastText',
               '&:hover': {
-                bgcolor: 'primary.dark',
-              },
+                bgcolor: 'primary.dark'
+              }
             }}
           >
             Register with Google
           </Button>
+
+          <Typography variant="body2" sx={{ mt: 3 }}>
+            Already have an account? <SignInUpViewLink href="/auth/prihlasenie" text="Sign in!" />
+          </Typography>
         </CardContent>
       </Card>
     </Box>
