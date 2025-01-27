@@ -7,7 +7,7 @@ import { useState } from "react";
 import Alert from "@mui/material/Alert";
 
 export default function SignInView() {
-  const [error, setError] = useState<string | null>(null);
+  const [error] = useState<string | null>(null);
 
   return (
     <Container
