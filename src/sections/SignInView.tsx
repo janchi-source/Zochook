@@ -41,7 +41,7 @@ export default function SignInView() {
       {error && <Alert severity="error">{error}</Alert>}
 
       <Typography variant="body2" sx={{ mt: 3 }}>
-        Already have an account? <SignInUpViewLink href="/signin" text="Sign in!" />
+        Already have an account? <SignInUpViewLink href="/signup" text="Sign in!" />
       </Typography>
 
     </Container>
