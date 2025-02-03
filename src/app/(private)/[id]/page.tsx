@@ -1,58 +1,91 @@
-// src/app/private/[id]/page.tsx
-
 "use client";
 
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Box, Typography } from "@mui/material";
 
-// Example of a function to fetch resource details based on ID (modify based on your use case)
+// Dummy fetch function. Replace with your actual API call.
 const fetchResourceDetails = async (id: string) => {
-  // You can modify this function to fetch data for your specific use case
-  // For example, if it's a user profile, fetch user data, or if it's a post, fetch post details
   const response = await fetch(`/api/private/resource/${id}`);
   if (!response.ok) {
-    throw new Error('Failed to fetch resource data');
+    throw new Error("Failed to fetch resource data");
   }
-  const data = await response.json();
-  return data;
+  return await response.json();
+};
+
+// Polaroid post component for styling
+const PolaroidPost = ({ resource }: { resource: any }) => {
+  return (
+    <Box
+      sx={{
+        width: 300,
+        backgroundColor: "#fff",
+        boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
+        p: 2,
+        m: "20px auto",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        border: "1px solid #ddd",
+        borderBottomWidth: "30px", // extra bottom border to mimic a polaroid frame
+        borderRadius: "4px",
+      }}
+    >
+      <Box
+        component="img"
+        src={resource.image || "/placeholder.jpg"}
+        alt={resource.title}
+        sx={{
+          width: "100%",
+          height: 200,
+          objectFit: "cover",
+        }}
+      />
+      <Typography variant="h6" sx={{ mt: 1, textAlign: "center" }}>
+        {resource.title}
+      </Typography>
+      <Typography variant="body2" sx={{ mt: 1, textAlign: "center" }}>
+        {resource.description || resource.content}
+      </Typography>
+    </Box>
+  );
 };
 
 const PrivateIdPage = ({ params }: { params: { id: string } }) => {
   const { data: session, status } = useSession();
-  const [resource, setResource] = useState(null);
+  const [resource, setResource] = useState<any>(null);
   const router = useRouter();
   const { id } = params;
 
   useEffect(() => {
-    if (status === "loading") return; // Wait until the session status is resolved
+    if (status === "loading") return; // Wait until session status is determined
 
     if (!session) {
-      // Redirect to the registration page if the user is not logged in
       router.push("/auth/registracia");
     } else {
-      // Fetch the resource (e.g., user profile or post) based on the ID
+      // Fetch resource details using the provided ID
       fetchResourceDetails(id)
         .then(setResource)
         .catch((error) => {
           console.error(error);
-          router.push("/404"); // Optionally, you can handle errors by redirecting to a custom 404 page
+          router.push("/404");
         });
     }
   }, [session, status, id, router]);
 
   if (status === "loading" || !resource) {
-    // Show a loading spinner or skeleton while data is being fetched
-    return <p>Loading...</p>;
+    return <Typography>Loading...</Typography>;
   }
 
   return (
-    <div>
-      <h1>Resource Details (ID: {id})</h1>
-      {/* Render the resource details, based on what you fetched */}
-      <pre>{JSON.stringify(resource, null, 2)}</pre>
-      {/* Customize this based on your actual resource structure */}
-    </div>
+    <Box sx={{ p: 4 }}>
+      <Typography variant="h4" sx={{ mb: 2, textAlign: "center" }}>
+        Resource Details (ID: {id})
+      </Typography>
+      {/* Render the resource as a polaroid */}
+      <PolaroidPost resource={resource} />
+    </Box>
   );
 };
 

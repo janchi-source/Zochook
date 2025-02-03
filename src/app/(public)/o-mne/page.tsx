@@ -1,143 +1,194 @@
-// src/app/(public)/o-mne/page.tsx
+"use client";
 
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import { Stack } from '@mui/material';
-
-export const metadata = { title: "About Us | Kolcobos" }
+import React from "react";
+import { Typography, Box, Grid, Container } from "@mui/material";
 
 export default function AboutUs() {
   return (
-    <Container maxWidth="lg">
-      <Box sx={{ py: 6 }}>
-        <Stack spacing={8}>
-          {/* Hero Section */}
-          <section>
-            <Typography variant="h2" component="h1" gutterBottom align="center" sx={{ mb: 4 }}>
-              Building the Future of Digital Solutions
-            </Typography>
-            <Typography variant="h5" align="center" color="text.secondary" sx={{ mb: 6 }}>
-              We create innovative software solutions that transform businesses and enhance user experiences
-            </Typography>
-          </section>
-
-          {/* Mission & Vision */}
-          <section>
-            <Grid container spacing={4}>
-              <Grid item xs={12} md={6}>
-                <Card sx={{ height: '100%' }}>
-                  <CardContent>
-                    <Typography variant="h4" gutterBottom>
-                      Our Mission
-                    </Typography>
-                    <Typography>
-                      To deliver exceptional digital solutions that empower businesses to thrive in the modern world, 
-                      focusing on innovation, quality, and customer satisfaction.
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <Card sx={{ height: '100%' }}>
-                  <CardContent>
-                    <Typography variant="h4" gutterBottom>
-                      Our Vision
-                    </Typography>
-                    <Typography>
-                      To become a leading force in digital transformation, setting new standards in software 
-                      development and technological innovation.
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-            </Grid>
-          </section>
-
-          {/* Core Values */}
-          <section>
-            <Typography variant="h3" gutterBottom align="center" sx={{ mb: 4 }}>
-              Our Core Values
-            </Typography>
-            <Grid container spacing={3}>
-              {[
-                {
-                  title: "Innovation",
-                  description: "We constantly push boundaries and embrace new technologies to deliver cutting-edge solutions."
-                },
-                {
-                  title: "Quality",
-                  description: "We maintain the highest standards in every project, ensuring robust and reliable solutions."
-                },
-                {
-                  title: "Collaboration",
-                  description: "We believe in the power of teamwork and close partnership with our clients."
-                },
-                {
-                  title: "Integrity",
-                  description: "We conduct our business with transparency, honesty, and ethical principles."
-                }
-              ].map((value, index) => (
-                <Grid item xs={12} sm={6} md={3} key={index}>
-                  <Card sx={{ height: '100%' }}>
-                    <CardContent>
-                      <Typography variant="h5" gutterBottom>
-                        {value.title}
-                      </Typography>
-                      <Typography>
-                        {value.description}
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid>
-          </section>
-
-          {/* Our Approach */}
-          <section>
-            <Typography variant="h3" gutterBottom align="center" sx={{ mb: 4 }}>
-              Our Approach
-            </Typography>
-            <Grid container spacing={4}>
-              <Grid item xs={12} md={6}>
-                <Typography variant="h5" gutterBottom>
-                  Client-Centric Focus
-                </Typography>
-                <Typography paragraph>
-                  We put our clients at the center of everything we do. By understanding their unique challenges 
-                  and objectives, we deliver tailored solutions that drive real business value.
-                </Typography>
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <Typography variant="h5" gutterBottom>
-                  Continuous Improvement
-                </Typography>
-                <Typography paragraph>
-                  We&apos;re committed to staying at the forefront of technological advancement, constantly updating 
-                  our skills and methodologies to provide the best possible solutions.
-                </Typography>
-              </Grid>
-            </Grid>
-          </section>
-
-          {/* Contact CTA */}
-          <section>
-            <Box sx={{ textAlign: 'center', py: 4 }}>
-              <Typography variant="h4" gutterBottom>
-                Ready to Work Together?
-              </Typography>
-              <Typography variant="body1" sx={{ mb: 2 }}>
-                Let&apos;s discuss how we can help transform your business with our innovative solutions.
-              </Typography>
-              {/* Add your contact button or form here */}
-            </Box>
-          </section>
-        </Stack>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        background: "linear-gradient(180deg, #2271b3 0%, #89c5eb 100%)",
+        display: "flex",
+        flexDirection: "column",
+        position: "relative",
+        overflow: "hidden",
+        pb: 10
+      }}
+    >
+      {/* Animated Background Elements */}
+      <Box
+        sx={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 0,
+        }}
+      >
+        {/* Clouds */}
+        {[...Array(8)].map((_, i) => (
+          <Box
+            key={i}
+            sx={{
+              position: "absolute",
+              width: "120px",
+              height: "60px",
+              background: "rgba(255, 255, 255, 0.8)",
+              borderRadius: "30px",
+              top: `${Math.random() * 40}%`,
+              left: `-120px`,
+              animation: `moveCloud ${15 + i * 2}s linear infinite`,
+              animationDelay: `${i * 2}s`,
+              "&:before": {
+                content: '""',
+                position: "absolute",
+                top: "-20px",
+                left: "15px",
+                width: "60px",
+                height: "60px",
+                background: "rgba(255, 255, 255, 0.8)",
+                borderRadius: "50%",
+              },
+              "&:after": {
+                content: '""',
+                position: "absolute",
+                top: "-30px",
+                left: "45px",
+                width: "60px",
+                height: "60px",
+                background: "rgba(255, 255, 255, 0.8)",
+                borderRadius: "50%",
+              },
+            }}
+          />
+        ))}
       </Box>
-    </Container>
+
+      {/* Content */}
+      <Container maxWidth="lg" sx={{ position: "relative", zIndex: 2, mt: 4 }}>
+        {/* Mission & Vision */}
+        <Grid container spacing={4} justifyContent="center">
+          <Grid item xs={12} md={5}>
+            <Box className="polaroid">
+              <Typography variant="h4" gutterBottom sx={{ color: '#1a1a1a' }}>
+                Our Mission
+              </Typography>
+              <Typography sx={{ color: '#333333' }}>
+                To deliver exceptional digital solutions that empower businesses
+                to thrive in the modern world.
+              </Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={5}>
+            <Box className="polaroid">
+              <Typography variant="h4" gutterBottom sx={{ color: '#1a1a1a' }}>
+                Our Vision
+              </Typography>
+              <Typography sx={{ color: '#333333' }}>
+                To become a leading force in digital transformation, setting
+                new standards in software development.
+              </Typography>
+            </Box>
+          </Grid>
+        </Grid>
+
+        {/* Core Values Section */}
+        <Typography
+          variant="h2"
+          align="center"
+          sx={{
+            color: 'white',
+            my: 6,
+            fontSize: '48px',
+            fontWeight: 700,
+            textShadow: '2px 2px 4px rgba(0,0,0,0.2)'
+          }}
+        >
+          Our Core Values
+        </Typography>
+
+        <Grid container spacing={4} justifyContent="center">
+          {[
+            {
+              title: "Innovation",
+              description: "Pushing boundaries with cutting-edge solutions"
+            },
+            {
+              title: "Quality",
+              description: "Maintaining highest standards in every project"
+            },
+            {
+              title: "Collaboration",
+              description: "Building strong partnerships with our clients"
+            },
+            {
+              title: "Integrity",
+              description: "Operating with transparency and honesty"
+            }
+          ].map((value, index) => (
+            <Grid item xs={12} sm={6} md={3} key={index}>
+              <Box className="polaroid">
+                <Typography variant="h5" gutterBottom sx={{ color: '#1a1a1a' }}>
+                  {value.title}
+                </Typography>
+                <Typography sx={{ color: '#333333' }}>
+                  {value.description}
+                </Typography>
+              </Box>
+            </Grid>
+          ))}
+        </Grid>
+
+        {/* Approach Section */}
+        <Grid container spacing={4} sx={{ mt: 4 }} justifyContent="center">
+          <Grid item xs={12} md={6}>
+            <Box className="polaroid">
+              <Typography variant="h5" gutterBottom sx={{ color: '#1a1a1a' }}>
+                Client-Centric Focus
+              </Typography>
+              <Typography sx={{ color: '#333333' }}>
+                Understanding unique challenges and delivering tailored solutions.
+              </Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <Box className="polaroid">
+              <Typography variant="h5" gutterBottom sx={{ color: '#1a1a1a' }}>
+                Continuous Improvement
+              </Typography>
+              <Typography sx={{ color: '#333333' }}>
+                Staying at the forefront of technological advancement.
+              </Typography>
+            </Box>
+          </Grid>
+        </Grid>
+      </Container>
+
+      <style jsx global>{`
+        @keyframes moveCloud {
+          from {
+            transform: translateX(-120px);
+          }
+          to {
+            transform: translateX(calc(100vw + 120px));
+          }
+        }
+        .polaroid {
+          background: white;
+          padding: 20px;
+          border: 12px solid white;
+          box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+          transform: rotate(${Math.random() * 4 - 2}deg);
+          transition: transform 0.3s, box-shadow 0.3s;
+          height: 100%;
+        }
+        .polaroid:hover {
+          transform: scale(1.02) rotate(0deg);
+          box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+        }
+      `}</style>
+    </Box>
   );
 }
