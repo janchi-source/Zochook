@@ -60,6 +60,7 @@ export default function SignUpView() {
         bgcolor: 'background.default'
       }}
     >
+
       <Card
         sx={{
           width: 400,
@@ -112,6 +113,8 @@ export default function SignUpView() {
           </Typography>
         </CardContent>
       </Card>
+
+
     </Box>
   );
 }

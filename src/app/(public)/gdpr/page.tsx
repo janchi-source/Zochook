@@ -5,6 +5,7 @@ import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
 import { Stack } from '@mui/material';
 import Link from '@mui/material/Link';
+import Wave from 'react-wavify';
 
 export default function TermsConditions() {
   return (
@@ -68,6 +69,32 @@ export default function TermsConditions() {
           />
         ))}
       </Box>
+
+        {/* Wave Background */}
+        <Box sx={{ position: 'absolute', width: '100%', height: '100%', zIndex: 0 }}>
+            <Wave
+                fill="rgba(255, 255, 255, 0.2)"
+                paused={false}
+                options={{
+                    height: 20,
+                    amplitude: 30,
+                    speed: 0.15,
+                    points: 3
+                }}
+                style={{ position: 'absolute', bottom: '0' }}
+            />
+            <Wave
+                fill="rgba(255, 255, 255, 0.1)"
+                paused={false}
+                options={{
+                    height: 25,
+                    amplitude: 35,
+                    speed: 0.2,
+                    points: 4
+                }}
+                style={{ position: 'absolute', bottom: '10px' }}
+            />
+        </Box>
 
       {/* Content */}
       <Container maxWidth="md" sx={{ position: "relative", zIndex: 2, py: 4 }}>

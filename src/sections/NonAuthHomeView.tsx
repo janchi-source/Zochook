@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Container, Typography, Box, Button } from '@mui/material';
+import Wave from 'react-wavify';
 
 export default function NonAuthPageView() {
   return (
@@ -94,47 +95,32 @@ export default function NonAuthPageView() {
   }}
 />
 
-{/* Waves */}
-<Box
-  sx={{
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: '30%',
-    zIndex: 1,
-  }}
->
-  <svg viewBox="0 0 500 150" preserveAspectRatio="none" style={{ width: '100%', height: '100%' }}>
-    <path
-      d="M-8.74,71.55 C289.78,255.11 349.60,4.47 505.36,34.05 L500.00,150.00 L0.00,150.00 Z"
-      style={{
-        stroke: 'none',
-        fill: '#89c5eb',
-        opacity: '0.8',
-        animation: 'wave1 7s linear infinite',
-      }}
-    />
-    <path
-      d="M-23.42,125.83 C187.63,45.89 299.38,57.73 526.80,123.86 L500.00,150.00 L0.00,150.00 Z"
-      style={{
-        stroke: 'none',
-        fill: '#89c5eb',
-        opacity: '0.6',
-        animation: 'wave2 5s linear infinite',
-      }}
-    />
-    <path
-      d="M-23.42,125.83 C172.96,-152.44 217.55,183.06 504.22,55.77 L500.00,150.00 L0.00,150.00 Z"
-      style={{
-        stroke: 'none',
-        fill: '#89c5eb',
-        opacity: '0.4',
-        animation: 'wave3 3s linear infinite',
-      }}
-    />
-  </svg>
-</Box>
+
+          {/* Wave Background */}
+          <Box sx={{ position: 'absolute', width: '100%', height: '100%', zIndex: 0 }}>
+              <Wave
+                  fill="rgba(255, 255, 255, 0.2)"
+                  paused={false}
+                  options={{
+                      height: 20,
+                      amplitude: 30,
+                      speed: 0.15,
+                      points: 3
+                  }}
+                  style={{ position: 'absolute', bottom: '0' }}
+              />
+              <Wave
+                  fill="rgba(255, 255, 255, 0.1)"
+                  paused={false}
+                  options={{
+                      height: 25,
+                      amplitude: 35,
+                      speed: 0.2,
+                      points: 4
+                  }}
+                  style={{ position: 'absolute', bottom: '10px' }}
+              />
+          </Box>
 
         {[...Array(8)].map((_, i) => (
           <Box
@@ -174,8 +160,6 @@ export default function NonAuthPageView() {
         ))}
       </Box>
 
-      {/* Your existing content */}
-      {/* ... (keep all your existing content) ... */}
 
       <style jsx global>{`
       @keyframes sunGlow {
