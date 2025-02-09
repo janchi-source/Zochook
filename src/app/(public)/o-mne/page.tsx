@@ -8,7 +8,6 @@ export default function AboutUs() {
     <Box
       sx={{
         minHeight: "100vh",
-        background: "linear-gradient(180deg, #2271b3 0%, #89c5eb 100%)",
         display: "flex",
         flexDirection: "column",
         position: "relative",
@@ -16,55 +15,7 @@ export default function AboutUs() {
         pb: 10
       }}
     >
-      {/* Animated Background Elements */}
-      <Box
-        sx={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          zIndex: 0,
-        }}
-      >
-        {/* Clouds */}
-        {[...Array(8)].map((_, i) => (
-          <Box
-            key={i}
-            sx={{
-              position: "absolute",
-              width: "120px",
-              height: "60px",
-              background: "rgba(255, 255, 255, 0.8)",
-              borderRadius: "30px",
-              top: `${Math.random() * 40}%`,
-              left: `-120px`,
-              animation: `moveCloud ${15 + i * 2}s linear infinite`,
-              animationDelay: `${i * 2}s`,
-              "&:before": {
-                content: '""',
-                position: "absolute",
-                top: "-20px",
-                left: "15px",
-                width: "60px",
-                height: "60px",
-                background: "rgba(255, 255, 255, 0.8)",
-                borderRadius: "50%",
-              },
-              "&:after": {
-                content: '""',
-                position: "absolute",
-                top: "-30px",
-                left: "45px",
-                width: "60px",
-                height: "60px",
-                background: "rgba(255, 255, 255, 0.8)",
-                borderRadius: "50%",
-              },
-            }}
-          />
-        ))}
-      </Box>
+     
 
       {/* Content */}
       <Container maxWidth="lg" sx={{ position: "relative", zIndex: 2, mt: 4 }}>
@@ -167,14 +118,6 @@ export default function AboutUs() {
       </Container>
 
       <style jsx global>{`
-        @keyframes moveCloud {
-          from {
-            transform: translateX(-120px);
-          }
-          to {
-            transform: translateX(calc(100vw + 120px));
-          }
-        }
         .polaroid {
           background: white;
           padding: 20px;
