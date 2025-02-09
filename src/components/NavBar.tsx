@@ -16,27 +16,27 @@ import AccessibilityIcon from "@mui/icons-material/Accessibility";
 import ArticleIcon from "@mui/icons-material/Article";
 import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
 import LogoutIcon from "@mui/icons-material/Logout";
-import Brightness7Icon from "@mui/icons-material/Brightness7"; // Sun icon
-import Brightness4Icon from "@mui/icons-material/Brightness4"; // Moon icon
-import { useRouter, usePathname } from "next/navigation"; // usePathname to detect the current route
+import Brightness7Icon from "@mui/icons-material/Brightness7";
+import Brightness4Icon from "@mui/icons-material/Brightness4";
+import { useRouter, usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { useTheme } from "next-themes"; // Assuming ThemeToggle relies on next-themes
+import { useTheme } from "next-themes";
 
 export default function Navbar() {
-  const [isSun, setIsSun] = React.useState(true); // State for sun/moon toggle
-  const { theme, setTheme } = useTheme(); // Using next-themes hook for theme toggling
+  const [isSun, setIsSun] = React.useState(true);
+  const { theme, setTheme } = useTheme();
   const router = useRouter();
-  const pathname = usePathname(); // Get the current route
+  const pathname = usePathname();
   const { data: session, status } = useSession();
 
   const handleNavigation = (event: React.SyntheticEvent, newValue: string) => {
     if (
-      !session &&
-      newValue !== "/auth/registracia" &&
-      newValue !== "/auth/prihlasenie" &&
-      newValue !== "/" &&
-      newValue !== "/o-mne" &&
-      newValue !== "/gdpr"
+        !session &&
+        newValue !== "/auth/registracia" &&
+        newValue !== "/auth/prihlasenie" &&
+        newValue !== "/" &&
+        newValue !== "/o-mne" &&
+        newValue !== "/gdpr"
     ) {
       router.push("/auth/registracia");
     } else {
@@ -44,13 +44,11 @@ export default function Navbar() {
     }
   };
 
-  // Toggle the sun/moon and theme
   const handleThemeToggle = () => {
     setIsSun((prev) => !prev);
-    setTheme(theme === "light" ? "dark" : "light"); // Toggle between light and dark themes
+    setTheme(theme === "light" ? "dark" : "light");
   };
 
-  // Non-authenticated navigation paths
   const nonAuthPaths = [
     { label: "Domov", value: "/", icon: <HomeIcon /> },
     { label: "O mne", value: "/o-mne", icon: <AccessibilityIcon /> },
@@ -59,7 +57,6 @@ export default function Navbar() {
     { label: "Prihlásenie", value: "/auth/prihlasenie", icon: <LoginIcon /> },
   ];
 
-  // Authenticated navigation paths
   const authPaths = [
     { label: "Domov", value: "/prispevok", icon: <HomeIcon /> },
     { label: "Hľadať", value: "/hladat", icon: <SearchIcon /> },
@@ -68,9 +65,9 @@ export default function Navbar() {
       label: "Profil",
       value: "/profile",
       icon: session?.user?.image ? (
-        <Avatar alt={session?.user?.name || "User"} src={session?.user?.image || undefined} />
+          <Avatar alt={session?.user?.name || "User"} src={session?.user?.image || undefined} />
       ) : (
-        <Avatar>{session?.user?.name?.charAt(0) || "U"}</Avatar>
+          <Avatar>{session?.user?.name?.charAt(0) || "U"}</Avatar>
       ),
     },
     { label: "Odhlásiť", value: "/auth/odhlasenie", icon: <LogoutIcon /> },
@@ -79,36 +76,57 @@ export default function Navbar() {
   const navigationPaths = status === "authenticated" ? authPaths : nonAuthPaths;
 
   return (
-    <Box sx={{ width: "100%", position: "fixed", bottom: 0 }}>
-      <BottomNavigation
-        showLabels
-        value={pathname} // Use the current path as the selected value
-        onChange={(event, newValue) => handleNavigation(event, newValue)}
-      >
-        {navigationPaths.map((path) => (
-          <BottomNavigationAction
-            key={path.value}
-            label={path.label}
-            value={path.value}
-            icon={path.icon}
-            sx={{
-              color: pathname === path.value ? "blue" : "inherit", // Highlight the active icon
-            }}
-          />
-        ))}
-        {/* Sun/Moon Toggle */}
-        <IconButton
-          onClick={handleThemeToggle}
+      <Box
           sx={{
-            position: "absolute",
-            bottom: "10px",
-            right: "10px",
+            width: "100%",
+            position: "fixed",
+            bottom: 0,
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            boxShadow: '0px -2px 10px rgba(0,0,0,0.1)',
           }}
-          color="inherit"
+      >
+        <BottomNavigation
+            showLabels
+            value={pathname}
+            onChange={(event, newValue) => handleNavigation(event, newValue)}
+            sx={{
+              backgroundColor: 'transparent',
+              '& .MuiBottomNavigationAction-root': {
+                color: 'rgba(255,255,255,0.7)',
+                '&.Mui-selected': {
+                  color: 'white',
+                },
+              },
+            }}
         >
-          {isSun ? <Brightness7Icon fontSize="large" /> : <Brightness4Icon fontSize="large" />}
-        </IconButton>
-      </BottomNavigation>
-    </Box>
+          {navigationPaths.map((path) => (
+              <BottomNavigationAction
+                  key={path.value}
+                  label={path.label}
+                  value={path.value}
+                  icon={path.icon}
+                  sx={{
+                    '& .MuiBottomNavigationAction-label': {
+                      fontSize: '0.75rem',
+                      '&.Mui-selected': {
+                        fontSize: '0.875rem',
+                      },
+                    },
+                  }}
+              />
+          ))}
+          <IconButton
+              onClick={handleThemeToggle}
+              sx={{
+                position: "absolute",
+                bottom: "10px",
+                right: "10px",
+                color: 'white',
+              }}
+          >
+            {isSun ? <Brightness7Icon fontSize="large" /> : <Brightness4Icon fontSize="large" />}
+          </IconButton>
+        </BottomNavigation>
+      </Box>
   );
 }
