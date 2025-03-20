@@ -5,8 +5,15 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
 
+interface Resource {
+  image?: string;
+  title: string;
+  description?: string;
+  content?: string;
+}
+
 // Dummy fetch function. Replace with your actual API call.
-const fetchResourceDetails = async (id: string) => {
+const fetchResourceDetails = async (id: string): Promise<Resource> => {
   const response = await fetch(`/api/private/resource/${id}`);
   if (!response.ok) {
     throw new Error("Failed to fetch resource data");
@@ -15,7 +22,7 @@ const fetchResourceDetails = async (id: string) => {
 };
 
 // Polaroid post component for styling
-const PolaroidPost = ({ resource }: { resource: any }) => {
+const PolaroidPost = ({ resource }: { resource: Resource }) => {
   return (
     <Box
       sx={{
@@ -54,7 +61,7 @@ const PolaroidPost = ({ resource }: { resource: any }) => {
 
 const PrivateIdPage = ({ params }: { params: { id: string } }) => {
   const { data: session, status } = useSession();
-  const [resource, setResource] = useState<any>(null);
+  const [resource, setResource] = useState<Resource | null>(null);
   const router = useRouter();
   const { id } = params;
 

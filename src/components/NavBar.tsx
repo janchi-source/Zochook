@@ -5,8 +5,9 @@ import {
   BottomNavigation,
   BottomNavigationAction,
   Box,
-  Avatar,
   IconButton,
+  SxProps,
+  Theme,
 } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
 import SearchIcon from "@mui/icons-material/Search";
@@ -21,8 +22,13 @@ import Brightness4Icon from "@mui/icons-material/Brightness4";
 import { useRouter, usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
+import ProfileMenu from "./ProfileMenu";
 
-export default function Navbar() {
+interface NavbarProps {
+  sx?: SxProps<Theme>;
+}
+
+export default function Navbar({ sx }: NavbarProps) {
   const [isSun, setIsSun] = React.useState(true);
   const { theme, setTheme } = useTheme();
   const router = useRouter();
@@ -30,13 +36,17 @@ export default function Navbar() {
   const { data: session, status } = useSession();
 
   const handleNavigation = (event: React.SyntheticEvent, newValue: string) => {
+    if (newValue === "profile-menu") {
+      return; // Do nothing when clicking profile
+    }
+    
     if (
-        !session &&
-        newValue !== "/auth/registracia" &&
-        newValue !== "/auth/prihlasenie" &&
-        newValue !== "/" &&
-        newValue !== "/o-mne" &&
-        newValue !== "/gdpr"
+      !session &&
+      newValue !== "/auth/registracia" &&
+      newValue !== "/auth/prihlasenie" &&
+      newValue !== "/" &&
+      newValue !== "/o-mne" &&
+      newValue !== "/gdpr"
     ) {
       router.push("/auth/registracia");
     } else {
@@ -63,70 +73,58 @@ export default function Navbar() {
     { label: "Pridať", value: "/pridat", icon: <AddCircleIcon /> },
     {
       label: "Profil",
-      value: "/profile",
-      icon: session?.user?.image ? (
-          <Avatar alt={session?.user?.name || "User"} src={session?.user?.image || undefined} />
-      ) : (
-          <Avatar>{session?.user?.name?.charAt(0) || "U"}</Avatar>
-      ),
-    },
-    { label: "Odhlásiť", value: "/auth/odhlasenie", icon: <LogoutIcon /> },
+      value: "profile-menu",
+      icon: <ProfileMenu />,
+    }
   ];
 
   const navigationPaths = status === "authenticated" ? authPaths : nonAuthPaths;
 
   return (
-      <Box
-          sx={{
-            width: "100%",
-            position: "fixed",
-            bottom: 0,
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            boxShadow: '0px -2px 10px rgba(0,0,0,0.1)',
-          }}
+    <Box sx={{ ...sx }}>
+      <BottomNavigation
+        value={pathname}
+        onChange={handleNavigation}
+        sx={{
+          width: "100%",
+          position: "fixed",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          backgroundColor: "background.paper",
+          borderTop: 1,
+          borderColor: "divider",
+          zIndex: 1000,
+        }}
       >
-        <BottomNavigation
-            showLabels
-            value={pathname}
-            onChange={(event, newValue) => handleNavigation(event, newValue)}
+        {navigationPaths.map((path) => (
+          <BottomNavigationAction
+            key={path.value}
+            label={path.label}
+            value={path.value}
+            icon={path.icon}
             sx={{
-              backgroundColor: 'transparent',
-              '& .MuiBottomNavigationAction-root': {
-                color: 'rgba(255,255,255,0.7)',
+              '& .MuiBottomNavigationAction-label': {
+                fontSize: '0.75rem',
                 '&.Mui-selected': {
-                  color: 'white',
+                  fontSize: '0.875rem',
                 },
               },
             }}
+          />
+        ))}
+        <IconButton
+          onClick={handleThemeToggle}
+          sx={{
+            position: "absolute",
+            bottom: "10px",
+            right: "10px",
+            color: 'white',
+          }}
         >
-          {navigationPaths.map((path) => (
-              <BottomNavigationAction
-                  key={path.value}
-                  label={path.label}
-                  value={path.value}
-                  icon={path.icon}
-                  sx={{
-                    '& .MuiBottomNavigationAction-label': {
-                      fontSize: '0.75rem',
-                      '&.Mui-selected': {
-                        fontSize: '0.875rem',
-                      },
-                    },
-                  }}
-              />
-          ))}
-          <IconButton
-              onClick={handleThemeToggle}
-              sx={{
-                position: "absolute",
-                bottom: "10px",
-                right: "10px",
-                color: 'white',
-              }}
-          >
-            {isSun ? <Brightness7Icon fontSize="large" /> : <Brightness4Icon fontSize="large" />}
-          </IconButton>
-        </BottomNavigation>
-      </Box>
+          {isSun ? <Brightness7Icon fontSize="large" /> : <Brightness4Icon fontSize="large" />}
+        </IconButton>
+      </BottomNavigation>
+    </Box>
   );
 }
