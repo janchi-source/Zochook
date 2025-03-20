@@ -16,7 +16,6 @@ import LoginIcon from "@mui/icons-material/Login";
 import AccessibilityIcon from "@mui/icons-material/Accessibility";
 import ArticleIcon from "@mui/icons-material/Article";
 import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
-import LogoutIcon from "@mui/icons-material/Logout";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import { useRouter, usePathname } from "next/navigation";
