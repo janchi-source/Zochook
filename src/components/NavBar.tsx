@@ -8,6 +8,7 @@ import {
   IconButton,
   SxProps,
   Theme,
+  useTheme as useMuiTheme,
 } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
 import SearchIcon from "@mui/icons-material/Search";
@@ -28,15 +29,15 @@ interface NavbarProps {
 }
 
 export default function Navbar({ sx }: NavbarProps) {
-  const [isSun, setIsSun] = React.useState(true);
   const { theme, setTheme } = useTheme();
+  const muiTheme = useMuiTheme();
   const router = useRouter();
   const pathname = usePathname();
   const { data: session, status } = useSession();
 
   const handleNavigation = (event: React.SyntheticEvent, newValue: string) => {
-    if (newValue === "profile-menu") {
-      return; // Do nothing when clicking profile
+    if (newValue === "profile-menu" || newValue === "theme-toggle") {
+      return; // Do nothing when clicking profile or theme toggle
     }
     
     if (
@@ -54,7 +55,6 @@ export default function Navbar({ sx }: NavbarProps) {
   };
 
   const handleThemeToggle = () => {
-    setIsSun((prev) => !prev);
     setTheme(theme === "light" ? "dark" : "light");
   };
 
@@ -90,9 +90,9 @@ export default function Navbar({ sx }: NavbarProps) {
           bottom: 0,
           left: 0,
           right: 0,
-          backgroundColor: "background.paper",
+          backgroundColor: theme === 'dark' ? '#1a1a1a' : 'background.paper',
           borderTop: 1,
-          borderColor: "divider",
+          borderColor: theme === 'dark' ? 'rgba(255, 255, 255, 0.12)' : 'divider',
           zIndex: 1000,
         }}
       >
@@ -103,6 +103,10 @@ export default function Navbar({ sx }: NavbarProps) {
             value={path.value}
             icon={path.icon}
             sx={{
+              color: theme === 'dark' ? 'rgba(255, 255, 255, 0.7)' : 'inherit',
+              '&.Mui-selected': {
+                color: theme === 'dark' ? '#fff' : muiTheme.palette.primary.main,
+              },
               '& .MuiBottomNavigationAction-label': {
                 fontSize: '0.75rem',
                 '&.Mui-selected': {
@@ -112,17 +116,24 @@ export default function Navbar({ sx }: NavbarProps) {
             }}
           />
         ))}
-        <IconButton
+        <BottomNavigationAction
           onClick={handleThemeToggle}
+          value="theme-toggle"
+          icon={theme === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+          label="Téma"
           sx={{
-            position: "absolute",
-            bottom: "10px",
-            right: "10px",
-            color: 'white',
+            color: theme === 'dark' ? 'rgba(255, 255, 255, 0.7)' : 'inherit',
+            '&.Mui-selected': {
+              color: theme === 'dark' ? '#fff' : muiTheme.palette.primary.main,
+            },
+            '& .MuiBottomNavigationAction-label': {
+              fontSize: '0.75rem',
+              '&.Mui-selected': {
+                fontSize: '0.875rem',
+              },
+            },
           }}
-        >
-          {isSun ? <Brightness7Icon fontSize="large" /> : <Brightness4Icon fontSize="large" />}
-        </IconButton>
+        />
       </BottomNavigation>
     </Box>
   );
