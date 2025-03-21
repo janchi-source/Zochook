@@ -32,7 +32,7 @@ export function PostsClientView({ posts }: { posts: Post[] }) {
       const response = await fetch(`@/favotite`, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ postId, userId: session.user.id }),
+        body: JSON.stringify({ postId, userId: session?.user?.id }),
       });
 
       if (response.ok) {
