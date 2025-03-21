@@ -6,10 +6,57 @@ import Image from "next/image";
 import Box from "@mui/material/Box";
 import { IconButton } from "@mui/material";
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useSession } from 'next-auth/react';
 
 // Client component to display posts
 export function PostsClientView({ posts }: { posts: Post[] }) {
+  const router = useRouter();
+  const { data: session } = useSession();
+  const [favorites, setFavorites] = useState<Record<number, boolean>>({});
+
+  // Function to handle favoriting a post
+  const handleFavorite = async (postId: number) => {
+    if (!session) {
+      router.push('/login');
+      return;
+    }
+
+    const isFavorited = favorites[postId];
+    const method = isFavorited ? 'DELETE' : 'POST';
+
+    try {
+      const response = await fetch(`/api/post/favorite`, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ postId, userId: session.user.id }),
+      });
+
+      if (response.ok) {
+        setFavorites(prev => ({ ...prev, [postId]: !isFavorited }));
+      } else {
+        console.error('Failed to update favorite status');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  // Function to handle commenting on a post
+  const handleComment = async (postId: number) => {
+    if (!session) {
+      router.push('/login');
+      return;
+    }
+
+    // Here you would typically open a modal or form for commenting
+    console.log(`Commenting on post ${postId}`);
+    // Implement comment form logic here
+  };
+
   return (
     <Box
       sx={{
@@ -118,10 +165,10 @@ export function PostsClientView({ posts }: { posts: Post[] }) {
                   width: '100%',
                   padding: '0 8px'
                 }}>
-                  <IconButton size="small" color="primary">
-                    <FavoriteBorderIcon />
+                  <IconButton size="small" color="primary" onClick={() => handleFavorite(post.id)}>
+                    {favorites[post.id] ? <FavoriteIcon /> : <FavoriteBorderIcon />}
                   </IconButton>
-                  <IconButton size="small" color="primary">
+                  <IconButton size="small" color="primary" onClick={() => handleComment(post.id)}>
                     <ChatBubbleOutlineIcon />
                   </IconButton>
                 </Box>
@@ -153,4 +200,4 @@ export function PostsClientView({ posts }: { posts: Post[] }) {
       </Box>
     </Box>
   );
-} 
+}
