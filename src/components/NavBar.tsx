@@ -5,7 +5,6 @@ import {
   BottomNavigation,
   BottomNavigationAction,
   Box,
-  IconButton,
   SxProps,
   Theme,
   useTheme as useMuiTheme,
