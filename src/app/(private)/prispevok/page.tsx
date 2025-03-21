@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import { PostsClientView } from "./PostsClientView";
+import PostsClientView from "./PostsClientView";
 
 // This is a Server Component
 export default async function Page() {

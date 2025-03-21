@@ -1,6 +1,11 @@
+// src/views/private/PostsView.tsx
+
 "use client";
 
-import { Post } from "@prisma/client";
+import { useEffect, useState } from "react";
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { fetchPosts } from "@/app/actions/posts";
 import Typography from "@mui/material/Typography";
 import Image from "next/image";
 import Box from "@mui/material/Box";
@@ -8,18 +13,41 @@ import { IconButton } from "@mui/material";
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { useSession } from 'next-auth/react';
 
-// Client component to display posts
-export function PostsClientView({ posts }: { posts: Post[] }) {
-  const router = useRouter();
+// Post interface
+interface Post {
+  id: string;
+  userId: string;
+  imageUrl: string;
+  caption?: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  user: {
+    name: string | null;
+  };
+}
+
+const PostsView = () => {
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [favorites, setFavorites] = useState<Record<string, boolean>>({});
   const { data: session } = useSession();
-  const [favorites, setFavorites] = useState<Record<number, boolean>>({});
+  const router = useRouter();
+
+  useEffect(() => {
+    const loadPosts = async () => {
+      try {
+        const fetchedPosts: Post[] = await fetchPosts();
+        setPosts(fetchedPosts);
+      } catch (error) {
+        console.error("Failed to fetch posts:", error);
+      }
+    };
+
+    loadPosts();
+  }, []);
 
   // Function to handle favoriting a post
-  const handleFavorite = async (postId: number) => {
+  const handleFavorite = async (postId: string) => {
     if (!session) {
       router.push('/login');
       return;
@@ -29,10 +57,10 @@ export function PostsClientView({ posts }: { posts: Post[] }) {
     const method = isFavorited ? 'DELETE' : 'POST';
 
     try {
-      const response = await fetch(`@/favotite`, {
+      const response = await fetch(`@/favorite`, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ postId, userId: session?.user?.id }),
+        body: JSON.stringify({ postId, userId: session.user.id }),
       });
 
       if (response.ok) {
@@ -46,13 +74,12 @@ export function PostsClientView({ posts }: { posts: Post[] }) {
   };
 
   // Function to handle commenting on a post
-  const handleComment = async (postId: number) => {
+  const handleComment = async (postId: string) => {
     if (!session) {
       router.push('/login');
       return;
     }
 
-    // Here you would typically open a modal or form for commenting
     console.log(`Commenting on post ${postId}`);
     // Implement comment form logic here
   };
@@ -111,14 +138,14 @@ export function PostsClientView({ posts }: { posts: Post[] }) {
           pointerEvents: 'none'
         }}
       />
-      
+
       {/* Polaroid Feed Container */}
       <Box sx={{
         width: '100%',
         maxWidth: '500px',
         margin: '0 auto',
         padding: '20px',
-        paddingBottom: '150px', // Extra space at bottom for waves + navbar
+        paddingBottom: '150px',
         position: 'relative',
         zIndex: 1,
       }}>
@@ -200,4 +227,6 @@ export function PostsClientView({ posts }: { posts: Post[] }) {
       </Box>
     </Box>
   );
-}
+};
+
+export default PostsView;
