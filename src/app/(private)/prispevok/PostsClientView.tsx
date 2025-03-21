@@ -29,7 +29,7 @@ export function PostsClientView({ posts }: { posts: Post[] }) {
     const method = isFavorited ? 'DELETE' : 'POST';
 
     try {
-      const response = await fetch(`/api/post/favorite`, {
+      const response = await fetch(`@/favotite`, {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ postId, userId: session.user.id }),
