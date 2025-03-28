@@ -2,10 +2,9 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { fetchPosts } from "@/app/actions/posts";
 import Typography from "@mui/material/Typography";
 import Image from "next/image";
 import Box from "@mui/material/Box";
@@ -13,6 +12,18 @@ import { IconButton } from "@mui/material";
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import TextField from '@mui/material/TextField';
+import SendIcon from '@mui/icons-material/Send';
+
+// Comment interface
+interface Comment {
+  id: number;
+  content: string;
+  createdAt: Date;
+  user: {
+    name: string | null;
+  };
+}
 
 // Post interface
 interface Post {
@@ -25,30 +36,34 @@ interface Post {
   user: {
     name: string | null;
   };
+  likesCount: number;
+  commentsCount: number;
+  isLiked: boolean;
+  comments: Comment[];
 }
 
-const PostsView = () => {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [favorites, setFavorites] = useState<Record<string, boolean>>({});
+interface PostsClientViewProps {
+  posts: Post[];
+}
+
+const PostsClientView = ({ posts }: PostsClientViewProps) => {
+  const [favorites, setFavorites] = useState<Record<string, boolean>>(
+    posts.reduce((acc, post) => ({ ...acc, [post.id]: post.isLiked }), {})
+  );
+  const [likesCount, setLikesCount] = useState<Record<string, number>>(
+    posts.reduce((acc, post) => ({ ...acc, [post.id]: post.likesCount }), {})
+  );
+  const [comments, setComments] = useState<Record<string, Comment[]>>(
+    posts.reduce((acc, post) => ({ ...acc, [post.id]: post.comments }), {})
+  );
+  const [newComment, setNewComment] = useState<Record<string, string>>({});
+  const [showComments, setShowComments] = useState<Record<string, boolean>>({});
   const { data: session } = useSession();
   const router = useRouter();
 
-  useEffect(() => {
-    const loadPosts = async () => {
-      try {
-        const fetchedPosts: Post[] = await fetchPosts();
-        setPosts(fetchedPosts);
-      } catch (error) {
-        console.error("Failed to fetch posts:", error);
-      }
-    };
-
-    loadPosts();
-  }, []);
-
   // Function to handle favoriting a post
   const handleFavorite = async (postId: string) => {
-    if (!session) {
+    if (!session?.user?.email) {
       router.push('/login');
       return;
     }
@@ -57,16 +72,19 @@ const PostsView = () => {
     const method = isFavorited ? 'DELETE' : 'POST';
 
     try {
-      const response = await fetch(`@/favorite`, {
+      const response = await fetch(`/api/posts/${postId}/like`, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ postId, userId: session.user.id }),
       });
 
       if (response.ok) {
         setFavorites(prev => ({ ...prev, [postId]: !isFavorited }));
+        setLikesCount(prev => ({
+          ...prev,
+          [postId]: prev[postId] + (isFavorited ? -1 : 1)
+        }));
       } else {
-        console.error('Failed to update favorite status');
+        console.error('Failed to update like status');
       }
     } catch (error) {
       console.error('Error:', error);
@@ -75,13 +93,39 @@ const PostsView = () => {
 
   // Function to handle commenting on a post
   const handleComment = async (postId: string) => {
-    if (!session) {
+    if (!session?.user?.email) {
       router.push('/login');
       return;
     }
 
-    console.log(`Commenting on post ${postId}`);
-    // Implement comment form logic here
+    setShowComments(prev => ({ ...prev, [postId]: !prev[postId] }));
+  };
+
+  const handleCommentSubmit = async (postId: string) => {
+    if (!session?.user?.email || !newComment[postId]?.trim()) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/posts/${postId}/comments`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: newComment[postId] }),
+      });
+
+      if (response.ok) {
+        const comment = await response.json();
+        setComments(prev => ({
+          ...prev,
+          [postId]: [comment, ...(prev[postId] || [])]
+        }));
+        setNewComment(prev => ({ ...prev, [postId]: '' }));
+      } else {
+        console.error('Failed to add comment');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
 
   return (
@@ -109,17 +153,6 @@ const PostsView = () => {
           backgroundAttachment: 'fixed',
           zIndex: 0,
           pointerEvents: 'none',
-        },
-        '&::after': {
-          content: '""',
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          width: '100%',
-          height: '80px',
-          backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 24 150 28\' preserveAspectRatio=\'none\'%3E%3Cdefs%3E%3Cpath id=\'gentle-wave\' d=\'M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z\' /%3E%3C/defs%3E%3Cg fill=\'%23294379\'%3E%3Cuse href=\'%23gentle-wave\' x=\'48\' y=\'0\' /%3E%3C/g%3E%3Cg fill=\'%23355693\'%3E%3Cuse href=\'%23gentle-wave\' x=\'48\' y=\'3\' /%3E%3C/g%3E%3Cg fill=\'%232a3e6c\'%3E%3Cuse href=\'%23gentle-wave\' x=\'48\' y=\'5\' /%3E%3C/g%3E%3Cg fill=\'%232d3a61\'%3E%3Cuse href=\'%23gentle-wave\' x=\'48\' y=\'7\' /%3E%3C/g%3E%3C/svg%3E")',
-          backgroundSize: '100% 100%',
-          zIndex: 0,
         }
       }}
     >
@@ -192,13 +225,107 @@ const PostsView = () => {
                   width: '100%',
                   padding: '0 8px'
                 }}>
-                  <IconButton size="small" color="primary" onClick={() => handleFavorite(post.id)}>
-                    {favorites[post.id] ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-                  </IconButton>
-                  <IconButton size="small" color="primary" onClick={() => handleComment(post.id)}>
-                    <ChatBubbleOutlineIcon />
-                  </IconButton>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                    <IconButton size="small" color="primary" onClick={() => handleFavorite(post.id)}>
+                      {favorites[post.id] ? <FavoriteIcon color="error" /> : <FavoriteBorderIcon />}
+                    </IconButton>
+                    <Typography variant="body2" color="text.secondary">
+                      {likesCount[post.id]}
+                    </Typography>
+                  </Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                    <IconButton size="small" color="primary" onClick={() => handleComment(post.id)}>
+                      <ChatBubbleOutlineIcon />
+                    </IconButton>
+                    <Typography variant="body2" color="text.secondary">
+                      {comments[post.id]?.length || 0}
+                    </Typography>
+                  </Box>
                 </Box>
+
+                {/* Comments Section */}
+                {showComments[post.id] && (
+                  <Box sx={{ 
+                    mt: 2, 
+                    px: 2, 
+                    pb: 2,
+                    borderTop: '1px solid #eee',
+                    backgroundColor: '#f8f8f8',
+                    borderRadius: '4px'
+                  }}>
+                    {/* Comment Input */}
+                    <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
+                      <TextField
+                        fullWidth
+                        size="small"
+                        placeholder="Add a comment..."
+                        value={newComment[post.id] || ''}
+                        onChange={(e) => setNewComment(prev => ({ ...prev, [post.id]: e.target.value }))}
+                        onKeyPress={(e) => {
+                          if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault();
+                            handleCommentSubmit(post.id);
+                          }
+                        }}
+                        sx={{
+                          '& .MuiOutlinedInput-root': {
+                            backgroundColor: 'white',
+                            '& fieldset': {
+                              borderColor: '#ddd',
+                            },
+                            '&:hover fieldset': {
+                              borderColor: '#999',
+                            },
+                          },
+                          '& .MuiInputBase-input': {
+                            color: '#333',
+                          },
+                        }}
+                      />
+                      <IconButton 
+                        color="primary" 
+                        onClick={() => handleCommentSubmit(post.id)}
+                        disabled={!newComment[post.id]?.trim()}
+                      >
+                        <SendIcon />
+                      </IconButton>
+                    </Box>
+
+                    {/* Comments List */}
+                    <Box sx={{ maxHeight: '200px', overflowY: 'auto' }}>
+                      {comments[post.id]?.map((comment) => (
+                        <Box key={comment.id} sx={{ 
+                          mb: 1,
+                          p: 1,
+                          backgroundColor: 'white',
+                          borderRadius: '4px',
+                          boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+                        }}>
+                          <Typography variant="body2" component="span" sx={{ 
+                            fontWeight: 'bold',
+                            color: '#333'
+                          }}>
+                            {comment.user.name || 'Anonymous'}
+                          </Typography>
+                          <Typography variant="body2" component="span" sx={{ 
+                            ml: 0.5,
+                            color: '#333'
+                          }}>
+                            {comment.content}
+                          </Typography>
+                          <Typography variant="caption" sx={{ 
+                            display: 'block',
+                            color: '#666',
+                            mt: 0.5
+                          }}>
+                            {new Date(comment.createdAt).toLocaleDateString()}
+                          </Typography>
+                        </Box>
+                      ))}
+                    </Box>
+                  </Box>
+                )}
+
               </div>
 
               <div style={{
@@ -229,4 +356,4 @@ const PostsView = () => {
   );
 };
 
-export default PostsView;
+export default PostsClientView;

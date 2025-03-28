@@ -2,7 +2,6 @@
 
 import React from "react";
 import { Typography, Box, Grid, Container } from "@mui/material";
-import Wave from 'react-wavify';
 
 export default function AboutUs() {
   return (
@@ -16,36 +15,8 @@ export default function AboutUs() {
         pb: 10
       }}
     >
-     
-
-        {/* Wave Background */}
-        <Box sx={{ position: 'absolute', width: '100%', height: '100%', zIndex: 0 }}>
-            <Wave
-                fill="rgba(255, 255, 255, 0.2)"
-                paused={false}
-                options={{
-                    height: 20,
-                    amplitude: 30,
-                    speed: 0.15,
-                    points: 3
-                }}
-                style={{ position: 'absolute', bottom: '0' }}
-            />
-            <Wave
-                fill="rgba(255, 255, 255, 0.1)"
-                paused={false}
-                options={{
-                    height: 25,
-                    amplitude: 35,
-                    speed: 0.2,
-                    points: 4
-                }}
-                style={{ position: 'absolute', bottom: '10px' }}
-            />
-        </Box>
-
       {/* Content */}
-      <Container maxWidth="lg" sx={{ position: "relative", zIndex: 2, mt: 4 }}>
+      <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
         {/* Mission & Vision */}
         <Grid container spacing={4} justifyContent="center">
           <Grid item xs={12} md={5}>
@@ -87,7 +58,7 @@ export default function AboutUs() {
           Our Core Values
         </Typography>
 
-        <Grid container spacing={4} justifyContent="center">
+        <Grid container spacing={4}>
           {[
             {
               title: "Innovation",
@@ -120,7 +91,7 @@ export default function AboutUs() {
         </Grid>
 
         {/* Approach Section */}
-        <Grid container spacing={4} sx={{ mt: 4 }} justifyContent="center">
+        <Grid container spacing={4} sx={{ mt: 4 }}>
           <Grid item xs={12} md={6}>
             <Box className="polaroid">
               <Typography variant="h5" gutterBottom sx={{ color: '#1a1a1a' }}>

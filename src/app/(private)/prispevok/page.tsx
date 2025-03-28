@@ -1,33 +1,69 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/app/api/auth/[...nextauth]/prisma";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import PostsClientView from "./PostsClientView";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 
 // This is a Server Component
 export default async function Page() {
-  const prisma = new PrismaClient({
-    log: ['query', 'error', 'warn'],
-    datasources: {
-      db: {
-        url: process.env.DATABASE_URL_UNPOOLED
-      }
-    }
-  });
-  
   try {
+    const session = await getServerSession(authOptions);
+    const currentUserId = session?.user?.email ? 
+      (await prisma.user.findUnique({ where: { email: session.user.email } }))?.id : 
+      null;
+
     const posts = await prisma.post.findMany({
       select: {
         id: true,
         imageUrl: true,
         caption: true,
         createdAt: true,
-        // Adding the missing fields to match Post type
         userId: true,
         updatedAt: true,
+        user: {
+          select: {
+            name: true
+          }
+        },
+        _count: {
+          select: {
+            likes: true,
+            comments: true
+          }
+        },
+        likes: currentUserId ? {
+          where: {
+            userId: currentUserId
+          }
+        } : false,
+        comments: {
+          select: {
+            id: true,
+            content: true,
+            createdAt: true,
+            user: {
+              select: {
+                name: true
+              }
+            }
+          },
+          orderBy: {
+            createdAt: 'desc'
+          }
+        }
       },
     });
     
-    return <PostsClientView posts={posts} />;
+    // Transform the data to match the expected format
+    const transformedPosts = posts.map(post => ({
+      ...post,
+      likesCount: post._count.likes,
+      commentsCount: post._count.comments,
+      isLiked: currentUserId ? post.likes.length > 0 : false
+    }));
+    
+    return <PostsClientView posts={transformedPosts} />;
   } catch (error) {
     console.error("Error fetching posts:", error);
     return (
