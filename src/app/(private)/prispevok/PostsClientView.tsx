@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Typography from "@mui/material/Typography";
@@ -16,6 +16,8 @@ import TextField from '@mui/material/TextField';
 import SendIcon from '@mui/icons-material/Send';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import DeleteIcon from '@mui/icons-material/Delete';
+import VolumeUpIcon from '@mui/icons-material/VolumeUp';
+import VolumeOffIcon from '@mui/icons-material/VolumeOff';
 
 // Comment interface
 interface Comment {
@@ -65,6 +67,8 @@ const PostsClientView = ({ posts }: PostsClientViewProps) => {
   const { data: session } = useSession();
   const router = useRouter();
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const likeSound = useRef<HTMLAudioElement | null>(null);
+  const [isSoundEnabled, setIsSoundEnabled] = useState(true);
 
   // Fetch current user's ID when session changes
   useEffect(() => {
@@ -84,6 +88,12 @@ const PostsClientView = ({ posts }: PostsClientViewProps) => {
     fetchUserId();
   }, [session]);
 
+  useEffect(() => {
+    // Create audio element
+    likeSound.current = new Audio('/sounds/like.mp3');
+    likeSound.current.volume = 0.5; // Set volume to 50%
+  }, []);
+
   // Function to handle favoriting a post
   const handleFavorite = async (postId: string) => {
     if (!session?.user?.email) {
@@ -101,6 +111,15 @@ const PostsClientView = ({ posts }: PostsClientViewProps) => {
       });
 
       if (response.ok) {
+        // Play sound when liking (not when unliking)
+        if (!isFavorited && isSoundEnabled && likeSound.current) {
+          try {
+            await likeSound.current.play();
+          } catch (error) {
+            console.error('Error playing sound:', error);
+          }
+        }
+
         setFavorites(prev => ({ ...prev, [postId]: !isFavorited }));
         setLikesCount(prev => ({
           ...prev,
@@ -246,6 +265,24 @@ const PostsClientView = ({ posts }: PostsClientViewProps) => {
           pointerEvents: 'none'
         }}
       />
+
+      {/* Sound Toggle Button */}
+      <IconButton
+        onClick={() => setIsSoundEnabled(prev => !prev)}
+        sx={{
+          position: 'fixed',
+          top: 100,
+          right: 30,
+          backgroundColor: 'rgba(255, 255, 255, 0.1)',
+          color: 'white',
+          '&:hover': {
+            backgroundColor: 'rgba(255, 255, 255, 0.2)',
+          },
+          zIndex: 2
+        }}
+      >
+        {isSoundEnabled ? <VolumeUpIcon /> : <VolumeOffIcon />}
+      </IconButton>
 
       {/* Polaroid Feed Container */}
       <Box sx={{
