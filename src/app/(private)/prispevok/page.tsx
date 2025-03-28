@@ -13,54 +13,62 @@ export default async function Page() {
       (await prisma.user.findUnique({ where: { email: session.user.email } }))?.id : 
       null;
 
+    // Get posts with user and comments
     const posts = await prisma.post.findMany({
-      select: {
-        id: true,
-        imageUrl: true,
-        caption: true,
-        createdAt: true,
-        userId: true,
-        updatedAt: true,
-        user: {
-          select: {
-            name: true
-          }
-        },
-        _count: {
-          select: {
-            likes: true,
-            comments: true
-          }
-        },
-        likes: currentUserId ? {
-          where: {
-            userId: currentUserId
-          }
-        } : false,
+      include: {
+        user: true,
         comments: {
-          select: {
-            id: true,
-            content: true,
-            createdAt: true,
-            user: {
-              select: {
-                name: true
-              }
-            }
+          include: {
+            user: true
           },
           orderBy: {
             createdAt: 'desc'
           }
         }
       },
+      orderBy: {
+        createdAt: 'desc'
+      }
     });
-    
+
+    // Get likes counts using raw query
+    const likesCountsRaw = await prisma.$queryRaw<Array<{ postId: string; count: string }>>`
+      SELECT "postId", COUNT(*) as count
+      FROM "Like"
+      GROUP BY "postId"
+    `;
+
+    // Get user likes
+    const userLikesRaw = currentUserId ? await prisma.$queryRaw<Array<{ postId: string }>>`
+      SELECT "postId"
+      FROM "Like"
+      WHERE "userId" = ${currentUserId}
+    ` : [];
+
     // Transform the data to match the expected format
     const transformedPosts = posts.map(post => ({
-      ...post,
-      likesCount: post._count.likes,
-      commentsCount: post._count.comments,
-      isLiked: currentUserId ? post.likes.length > 0 : false
+      id: post.id,
+      userId: post.userId,
+      imageUrl: post.imageUrl,
+      caption: post.caption,
+      createdAt: post.createdAt,
+      updatedAt: post.updatedAt,
+      user: {
+        name: post.user.name,
+        email: post.user.email
+      },
+      likesCount: Number(likesCountsRaw.find(l => l.postId === post.id)?.count || 0),
+      commentsCount: post.comments.length,
+      isLiked: currentUserId ? userLikesRaw.some(like => like.postId === post.id) : false,
+      comments: post.comments.map(comment => ({
+        id: comment.id,
+        content: comment.content,
+        createdAt: comment.createdAt,
+        userId: comment.userId,
+        user: {
+          name: comment.user.name
+        }
+      }))
     }));
     
     return <PostsClientView posts={transformedPosts} />;

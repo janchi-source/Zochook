@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Typography from "@mui/material/Typography";
@@ -15,6 +15,7 @@ import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import TextField from '@mui/material/TextField';
 import SendIcon from '@mui/icons-material/Send';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 // Comment interface
 interface Comment {
@@ -37,6 +38,7 @@ interface Post {
   updatedAt: Date;
   user: {
     name: string | null;
+    email: string | null;
   };
   likesCount: number;
   commentsCount: number;
@@ -62,6 +64,25 @@ const PostsClientView = ({ posts }: PostsClientViewProps) => {
   const [showComments, setShowComments] = useState<Record<string, boolean>>({});
   const { data: session } = useSession();
   const router = useRouter();
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+
+  // Fetch current user's ID when session changes
+  useEffect(() => {
+    const fetchUserId = async () => {
+      if (session?.user?.email) {
+        try {
+          const response = await fetch('/api/user/current');
+          if (response.ok) {
+            const data = await response.json();
+            setCurrentUserId(data.id);
+          }
+        } catch (error) {
+          console.error('Error fetching user ID:', error);
+        }
+      }
+    };
+    fetchUserId();
+  }, [session]);
 
   // Function to handle favoriting a post
   const handleFavorite = async (postId: string) => {
@@ -149,6 +170,33 @@ const PostsClientView = ({ posts }: PostsClientViewProps) => {
         }));
       } else {
         console.error('Failed to delete comment');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  // Function to handle post deletion
+  const handleDeletePost = async (postId: string) => {
+    if (!session?.user?.email) {
+      router.push('/login');
+      return;
+    }
+
+    if (!window.confirm('Are you sure you want to delete this post?')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/posts/${postId}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        // Remove the post from the UI
+        router.refresh();
+      } else {
+        console.error('Failed to delete post');
       }
     } catch (error) {
       console.error('Error:', error);
@@ -377,7 +425,8 @@ const PostsClientView = ({ posts }: PostsClientViewProps) => {
 
               <div style={{
                 textAlign: 'center',
-                paddingTop: '10px'
+                paddingTop: '10px',
+                position: 'relative'
               }}>
                 <Typography style={{
                   fontFamily: '"Homemade Apple", cursive',
@@ -387,13 +436,34 @@ const PostsClientView = ({ posts }: PostsClientViewProps) => {
                 }}>
                   {post.caption || "No caption available"}
                 </Typography>
-                <Typography style={{
-                  color: '#666',
-                  fontSize: '0.8rem',
-                  marginTop: '4px'
+                <Box sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  gap: 1,
+                  mt: 1
                 }}>
-                  {new Date(post.createdAt).toLocaleDateString()}
-                </Typography>
+                  <Typography style={{
+                    color: '#666',
+                    fontSize: '0.8rem'
+                  }}>
+                    {new Date(post.createdAt).toLocaleDateString()}
+                  </Typography>
+                  {currentUserId && post.userId === currentUserId && (
+                    <IconButton
+                      size="small"
+                      onClick={() => handleDeletePost(post.id)}
+                      sx={{
+                        color: '#666',
+                        '&:hover': {
+                          color: '#ff1744'
+                        }
+                      }}
+                    >
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                  )}
+                </Box>
               </div>
             </div>
           ))}
