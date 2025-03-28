@@ -14,12 +14,14 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import TextField from '@mui/material/TextField';
 import SendIcon from '@mui/icons-material/Send';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
 // Comment interface
 interface Comment {
   id: number;
   content: string;
   createdAt: Date;
+  userId: string;
   user: {
     name: string | null;
   };
@@ -122,6 +124,31 @@ const PostsClientView = ({ posts }: PostsClientViewProps) => {
         setNewComment(prev => ({ ...prev, [postId]: '' }));
       } else {
         console.error('Failed to add comment');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  // Function to handle comment deletion
+  const handleDeleteComment = async (postId: string, commentId: number) => {
+    if (!session?.user?.email) {
+      router.push('/login');
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/posts/${postId}/comments/${commentId}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        setComments(prev => ({
+          ...prev,
+          [postId]: prev[postId].filter(comment => comment.id !== commentId)
+        }));
+      } else {
+        console.error('Failed to delete comment');
       }
     } catch (error) {
       console.error('Error:', error);
@@ -299,27 +326,47 @@ const PostsClientView = ({ posts }: PostsClientViewProps) => {
                           p: 1,
                           backgroundColor: 'white',
                           borderRadius: '4px',
-                          boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+                          boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'flex-start'
                         }}>
-                          <Typography variant="body2" component="span" sx={{ 
-                            fontWeight: 'bold',
-                            color: '#333'
-                          }}>
-                            {comment.user.name || 'Anonymous'}
-                          </Typography>
-                          <Typography variant="body2" component="span" sx={{ 
-                            ml: 0.5,
-                            color: '#333'
-                          }}>
-                            {comment.content}
-                          </Typography>
-                          <Typography variant="caption" sx={{ 
-                            display: 'block',
-                            color: '#666',
-                            mt: 0.5
-                          }}>
-                            {new Date(comment.createdAt).toLocaleDateString()}
-                          </Typography>
+                          <Box>
+                            <Typography variant="body2" component="span" sx={{ 
+                              fontWeight: 'bold',
+                              color: '#333'
+                            }}>
+                              {comment.user.name || 'Anonymous'}
+                            </Typography>
+                            <Typography variant="body2" component="span" sx={{ 
+                              ml: 0.5,
+                              color: '#333'
+                            }}>
+                              {comment.content}
+                            </Typography>
+                            <Typography variant="caption" sx={{ 
+                              display: 'block',
+                              color: '#666',
+                              mt: 0.5
+                            }}>
+                              {new Date(comment.createdAt).toLocaleDateString()}
+                            </Typography>
+                          </Box>
+                          {session?.user && (
+                            <IconButton
+                              size="small"
+                              onClick={() => handleDeleteComment(post.id, comment.id)}
+                              sx={{ 
+                                ml: 1,
+                                color: '#666',
+                                '&:hover': {
+                                  color: '#ff1744'
+                                }
+                              }}
+                            >
+                              <DeleteOutlineIcon fontSize="small" />
+                            </IconButton>
+                          )}
                         </Box>
                       ))}
                     </Box>
